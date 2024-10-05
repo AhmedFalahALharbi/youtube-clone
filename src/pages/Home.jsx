@@ -68,7 +68,7 @@ const Home = () => {
       {error && <p className="text-red-500 mb-4">{error}</p>}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {videos.map((video) => (
-          <div key={video.id} className="p-4 border rounded-md">
+          <div key={video.id} className="p-4  rounded-md">
             <Link to={`/video/${video.id}`}>
               <img
                 src={video.snippet.thumbnails.medium.url}

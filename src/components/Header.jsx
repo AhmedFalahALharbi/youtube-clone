@@ -29,12 +29,13 @@ const Header = () => {
   };
 
   return (
-    <header className="flex items-center justify-between p-4 bg-base-100 text-primary">
+    <header className="flex items-center justify-between p-2 bg-base-100 text-primary sm:p-4">
+      {/* Drawer and logo */}
       <div className="flex items-center">
         <div className="drawer">
           <input id="my-drawer" type="checkbox" className="drawer-toggle" />
           <div className="drawer-content">
-            <label htmlFor="my-drawer" className="btn btn-ghost drawer-button">
+            <label htmlFor="my-drawer" className="btn btn-ghost drawer-button text-lg">
               ☰
             </label>
           </div>
@@ -43,35 +44,49 @@ const Header = () => {
               htmlFor="my-drawer"
               aria-label="close sidebar"
               className="drawer-overlay"></label>
-            <ul className="menu bg-base-200 text-base-content min-h-full w-80 p-4">
+            <ul className="menu bg-base-100 text-primary min-h-full w-60 p-4">
               <li>
-                <a>Sidebar Item 1</a>
+                <a>
+                  <img
+                    src="https://freepnglogo.com/images/all_img/1701508998white-youtube-logo-png.png"
+                    alt=""
+                    className="w-28"
+                  />
+                </a>
               </li>
-              <li>
-                <a>Sidebar Item 2</a>
-              </li>
+              <li><Link to="/">HomePage</Link></li>
+              <li><Link to="/shorts">Shorts</Link></li>
+              <li><Link to="/subscriptions">Subscription</Link></li>
+              <hr />
+              <li><Link to="/channel">Your Channel</Link></li>
+              <li><Link to="/history">History</Link></li>
+              <li><Link to="/playlist">Playlist</Link></li>
+              <li><Link to="/your-videos">Your Videos</Link></li>
+              <li><Link to="/watch-later">Watch Later</Link></li>
             </ul>
           </div>
         </div>
-        <Link to="/" className="w-36">
+        <Link to="/" className="w-28 sm:w-40">
           <img
             src="https://freepnglogo.com/images/all_img/1701508998white-youtube-logo-png.png"
             alt=""
+            className="w-full"
           />
         </Link>
       </div>
 
-      <form onSubmit={handleSearch} className="flex  mx-4">
+      {/* Search bar */}
+      <form onSubmit={handleSearch} className="flex w-full max-w-lg mx-4 sm:w-auto sm:mx-4">
         <input
           type="text"
           placeholder="Search"
-          className="w-96 p-2 rounded-l-full bg-neutral text-primary border-secondary border-[1px] placeholder:text-secondary active:border-[1px]"
+          className="w-full lg:w-96 p-2 rounded-l-full bg-neutral text-primary border-secondary border-[1px] placeholder:text-secondary active:border-[1px]"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
         <button
           type="submit"
-          className="p-2 bg-secondary rounded-r-full bg-secondary">
+          className="p-2 bg-secondary rounded-r-full">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="24px"
@@ -81,14 +96,12 @@ const Header = () => {
             <path d="M784-120 532-372q-30 24-69 38t-83 14q-109 0-184.5-75.5T120-580q0-109 75.5-184.5T380-840q109 0 184.5 75.5T640-580q0 44-14 83t-38 69l252 252-56 56ZM380-400q75 0 127.5-52.5T560-580q0-75-52.5-127.5T380-760q-75 0-127.5 52.5T200-580q0 75 52.5 127.5T380-400Z" />
           </svg>
         </button>
-        <button className="rounded-full bg-secondary p-2 mx-2">
-        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#F1F1F1"><path d="M480-400q-50 0-85-35t-35-85v-240q0-50 35-85t85-35q50 0 85 35t35 85v240q0 50-35 85t-85 35Zm0-240Zm-40 520v-123q-104-14-172-93t-68-184h80q0 83 58.5 141.5T480-320q83 0 141.5-58.5T680-520h80q0 105-68 184t-172 93v123h-80Zm40-360q17 0 28.5-11.5T520-520v-240q0-17-11.5-28.5T480-800q-17 0-28.5 11.5T440-760v240q0 17 11.5 28.5T480-480Z"/></svg>
-        </button>
       </form>
 
+      {/* User menu and profile */}
       <div className="flex items-center">
-
-      <button className="mx-2" >
+        {/* Notifications */}
+        <button className="hidden sm:block mx-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             height="24px"
@@ -99,6 +112,7 @@ const Header = () => {
           </svg>
         </button>
 
+        {/* Profile avatar dropdown */}
         <div className="dropdown dropdown-end">
           <div
             tabIndex={0}
@@ -116,22 +130,21 @@ const Header = () => {
 
           <ul
             tabIndex={0}
-            className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
-            <li>
-              <a className="justify-between">
-                Profile
-                <span className="badge">New</span>
-              </a>
-            </li>
-            <li> @{username}</li>
-            {/* Clear local storage and redirect to login */}
-            <li>
-              <a onClick={handleLogout}>Logout</a>
-            </li>
+            className="menu menu-sm dropdown-content rounded-box z-[1] mt-3 w-52 p-2 shadow bg-secondary">
+            <li><a>@{username}</a></li>
+            <hr />
+            <li><a>Google Account</a></li>
+            <li><a>Change Account</a></li>
+            <li><a onClick={handleLogout}>Logout</a></li>
+            <hr />
+            <li><a>YouTube Studio</a></li>
+            <li><a>Payment</a></li>
+            <hr />
+            <li><a>Data in YouTube</a></li>
+            <li><a>Device look</a></li>
+            <li><a>Language:English</a></li>
           </ul>
         </div>
-
-        
       </div>
     </header>
   );

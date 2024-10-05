@@ -2,6 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+
 const SignUp = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -53,31 +54,56 @@ const SignUp = () => {
   };
 
   return (
-    <div className="flex flex-col items-center mt-10">
-      <h1 className="text-3xl font-bold mb-4">Sign Up</h1>
-      {error && <p className="text-red-500 mb-4">{error}</p>}
-      {success && <p className="text-green-500 mb-4">{success}</p>}
-      <input
-        type="text"
-        placeholder="Username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        className="border p-2 mb-2 w-80"
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="border p-2 mb-2 w-80"
-      />
-      <button
-        onClick={handleSignUp}
-        className="bg-blue-500 text-white p-2 mt-2 w-80"
-      >
-        Sign Up
-      </button>
-      <p>Already have an account? <Link to="/signup" className="text-red-500">Log in</Link></p>
+    <div className="flex flex-col justify-center items-center h-screen bg-neutral text-gray-200">
+      {/* Card Container */}
+      <div className="bg-secondary shadow-md rounded-lg p-10 w-full max-w-sm">
+        <div className="flex flex-col items-center">
+          <img
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/Google_2015_logo.svg/368px-Google_2015_logo.svg.png"
+            alt="Google Logo"
+            className="w-32 mb-6"
+          />
+          <h2 className="text-2xl font-semibold mb-2 text-gray-100">Create your Google Account</h2>
+        </div>
+
+        {/* Error and Success Messages */}
+        {error && <p className="text-red-400 text-sm mb-4">{error}</p>}
+        {success && <p className="text-green-400 text-sm mb-4">{success}</p>}
+
+        {/* Input Fields */}
+        <input
+          type="text"
+          placeholder="Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          className="border border-gray-600 bg-neutral rounded-md p-3 mb-4 w-full text-gray-100 placeholder-gray-400 focus:outline-none focus:border-blue-500"
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="border border-gray-600 bg-neutral rounded-md p-3 mb-6 w-full text-gray-100 placeholder-gray-400 focus:outline-none focus:border-blue-500"
+        />
+
+        {/* Sign Up Button */}
+        <button
+          onClick={handleSignUp}
+          className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md w-full mb-6"
+        >
+          Sign Up
+        </button>
+
+        {/* Login Link */}
+        <p className="text-sm text-gray-400">
+          Already have an account?{' '}
+          <Link to="/login" className="text-blue-400 hover:underline">
+            Log in
+          </Link>
+        </p>
+      </div>
+
+    
     </div>
   );
 };
