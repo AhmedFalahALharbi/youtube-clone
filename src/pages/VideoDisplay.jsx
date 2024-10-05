@@ -1,36 +1,44 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
+import CommentForm from '../components/CommentForm';
 
 const VideoDisplay = () => {
-  const { id } = useParams(); // Get video ID from the URL
+  const { id } = useParams();
   const [video, setVideo] = useState(null);
   const [comments, setComments] = useState([]);
   const [videos, setVideos] = useState([]);
-  const [channelLogo, setChannelLogo] = useState(''); // For main video channel logo
-  const [popularVideosLogos, setPopularVideosLogos] = useState({}); // Store channel logos for popular videos
-  const [viewCount, setViewCount] = useState(null); // Store main video view count
+  const [channelLogo, setChannelLogo] = useState('');
+  const [popularVideosLogos, setPopularVideosLogos] = useState({});
+  const [viewCount, setViewCount] = useState(null);
   const [error, setError] = useState('');
+  const navigate = useNavigate(); // For navigation
 
   useEffect(() => {
-    // Fetch the main video details with statistics (to get the number of views)
+    // Check if the username is in localStorage
+    const username = localStorage.getItem('username');
+    if (!username) {
+      // Redirect to the login page if username is not in local storage
+      navigate('/login');
+      return; // Prevent further actions if redirected
+    }
+
+    // Fetch video details and statistics
     axios
       .get('https://www.googleapis.com/youtube/v3/videos', {
         params: {
-          part: 'snippet,statistics', // Fetch snippet and statistics (for views)
-          id: id, // The video ID from useParams
-          key: 'AIzaSyCQTFSPFFl6g1LTKyCFBnz873ZyIRIB7xw', // Your YouTube API Key
+          part: 'snippet,statistics',
+          id: id,
+          key: 'AIzaSyCQTFSPFFl6g1LTKyCFBnz873ZyIRIB7xw', // Replace with your YouTube API Key
         },
       })
       .then((response) => {
         if (response.data.items.length > 0) {
           const videoData = response.data.items[0];
-          setVideo(videoData); // Set the main video details
-          setViewCount(videoData.statistics.viewCount); // Set the view count
-
-          // Fetch the channel logo for the main video
+          setVideo(videoData);
+          setViewCount(videoData.statistics.viewCount);
           const channelId = videoData.snippet.channelId;
-          fetchChannelLogo(channelId, setChannelLogo);
+          fetchChannelLogo(channelId);
         } else {
           setError('Video not found');
         }
@@ -40,107 +48,132 @@ const VideoDisplay = () => {
         setError('Failed to load video');
       });
 
-    // Fetch most popular videos with statistics (to get the view count)
+    // Fetch popular videos
     axios
       .get('https://www.googleapis.com/youtube/v3/videos', {
         params: {
-          part: 'snippet,statistics', // Fetch snippet and statistics (for views)
+          part: 'snippet,statistics',
           chart: 'mostPopular',
           maxResults: 10,
-          regionCode: 'US', // You can change this to any region
-          key: 'AIzaSyCQTFSPFFl6g1LTKyCFBnz873ZyIRIB7xw', // Your YouTube API Key
+          regionCode: 'US',
+          key: 'AIzaSyCQTFSPFFl6g1LTKyCFBnz873ZyIRIB7xw',
         },
       })
       .then((response) => {
-        setVideos(response.data.items); // Set the popular videos
+        setVideos(response.data.items);
         response.data.items.forEach((video) => {
-          fetchChannelLogo(video.snippet.channelId, (logoUrl) => {
-            setPopularVideosLogos((prevLogos) => ({
-              ...prevLogos,
-              [video.snippet.channelId]: logoUrl,
-            }));
-          });
+          fetchChannelLogoForPopularVideos(video.snippet.channelId);
         });
       })
       .catch((err) => {
         console.error('Error fetching popular videos:', err);
+        setError('Failed to load popular videos');
       });
 
-    // Fetch YouTube comments for the main video
+    // Fetch comments from MockAPI
     axios
-      .get('https://www.googleapis.com/youtube/v3/commentThreads', {
-        params: {
-          part: 'snippet',
-          videoId: id, // The video ID for which to retrieve comments
-          key: 'AIzaSyCQTFSPFFl6g1LTKyCFBnz873ZyIRIB7xw', // Your YouTube API Key
-        },
-      })
+      .get(`https://66f1060c41537919154f2fc1.mockapi.io/comments?videoId=${id}`)
       .then((response) => {
-        setComments(response.data.items); // Set the comments
+        setComments(response.data);
       })
       .catch((err) => {
         console.error('Error fetching comments:', err);
+        setError('Failed to load comments');
       });
-  }, [id]);
+  }, [id, navigate]);
 
-  // Fetch the channel logo for the main video or a popular video
-  const fetchChannelLogo = (channelId, setLogo) => {
+  const fetchChannelLogo = (channelId) => {
     axios
       .get('https://www.googleapis.com/youtube/v3/channels', {
         params: {
           part: 'snippet',
           id: channelId,
-          key: 'AIzaSyCQTFSPFFl6g1LTKyCFBnz873ZyIRIB7xw', // Your YouTube API Key
+          key: 'AIzaSyCQTFSPFFl6g1LTKyCFBnz873ZyIRIB7xw',
         },
       })
       .then((response) => {
         if (response.data.items.length > 0) {
           const logoUrl = response.data.items[0].snippet.thumbnails.default.url;
-          setLogo(logoUrl); // Set the channel logo
+          setChannelLogo(logoUrl);
         }
       })
       .catch((err) => {
         console.error('Error fetching channel logo:', err);
+        setError('Failed to load channel logo');
       });
+  };
+
+  const fetchChannelLogoForPopularVideos = (channelId) => {
+    axios
+      .get('https://www.googleapis.com/youtube/v3/channels', {
+        params: {
+          part: 'snippet',
+          id: channelId,
+          key: 'AIzaSyCQTFSPFFl6g1LTKyCFBnz873ZyIRIB7xw',
+        },
+      })
+      .then((response) => {
+        if (response.data.items.length > 0) {
+          const logoUrl = response.data.items[0].snippet.thumbnails.default.url;
+          setPopularVideosLogos((prevLogos) => ({
+            ...prevLogos,
+            [channelId]: logoUrl,
+          }));
+        }
+      })
+      .catch((err) => {
+        console.error('Error fetching channel logo for popular videos:', err);
+        setError('Failed to load popular video logos');
+      });
+  };
+
+  const addComment = (newComment) => {
+    setComments([newComment, ...comments]);
   };
 
   return (
     <div className="flex flex-row w-full mt-10">
       {error && <p className="text-red-500 mb-4">{error}</p>}
-      {video ? (
+
+      {video && (
         <div className="w-2/3 p-4">
-          {/* Embed the video using iframe */}
           <iframe
             width="100%"
             height="500"
-            src={`https://www.youtube.com/embed/${video.id.videoId}`}
+            src={`https://www.youtube.com/embed/${video.id}`}
             frameBorder="0"
             allowFullScreen
           ></iframe>
+          <h2 className="text-2xl font-bold mt-4">{video.snippet.title}</h2>
 
-          {/* Display video title, view count, description, and channel logo */}
-          <div className="mt-4 flex items-center">
-            <img src={channelLogo} alt="Channel Logo" className="w-12 h-12 rounded-full mr-4" />
-            <div>
-              <h2 className="text-2xl font-bold">{video.snippet.title}</h2>
-              {viewCount && (
-                <p className="text-sm text-gray-600 mt-1">{viewCount} views</p>
-              )}
-              <p>{video.snippet.description}</p>
-              <p className="text-sm text-gray-600">Channel: {video.snippet.channelTitle}</p>
-            </div>
+          <div className="flex items-center mt-2">
+            {channelLogo && (
+              <img
+                src={channelLogo}
+                alt="Channel Logo"
+                className="w-12 h-12 rounded-full"
+              />
+            )}
+            <p className="ml-4 text-lg font-semibold">
+              {video.snippet.channelTitle}
+            </p>
+            <button className="ml-auto px-4 py-2 bg-red-600 text-white rounded">
+              Subscribe
+            </button>
           </div>
 
-          {/* Display YouTube comments */}
+          <p>{viewCount} views</p>
+          <p className="mt-4">{video.snippet.description}</p>
+
+          <CommentForm videoId={id} addComment={addComment} />
+
           <div className="mt-4">
             <h3 className="text-xl font-bold mb-4">Comments</h3>
             {comments.length > 0 ? (
               comments.map((comment) => (
                 <div key={comment.id} className="p-4 border-b">
-                  <p className="font-bold">
-                    {comment.snippet.topLevelComment.snippet.authorDisplayName}
-                  </p>
-                  <p>{comment.snippet.topLevelComment.snippet.textOriginal}</p>
+                  <p className="font-bold">{comment.username}</p>
+                  <p>{comment.text}</p>
                 </div>
               ))
             ) : (
@@ -148,40 +181,33 @@ const VideoDisplay = () => {
             )}
           </div>
         </div>
-      ) : (
-        <p>Loading video...</p>
       )}
 
-      {/* Sidebar for displaying popular videos */}
       <div className="w-1/3 p-4">
         <h3 className="text-xl font-bold mb-4">Popular Videos</h3>
-        {videos.length > 0 ? (
-          videos.map((video) => (
-            <div key={video.id} className="mb-4">
-              <Link to={`/video/${video.id.videoId}`}>
-                <img
-                  src={video.snippet.thumbnails.medium.url}
-                  alt={video.snippet.title}
-                  className="w-full"
-                />
-                <div className="flex items-center mt-2">
-                  {/* Display channel logo for each popular video */}
+        {videos.map((video) => (
+          <div key={video.id} className="mb-4">
+            <Link to={`/video/${video.id}`}>
+              <img
+                src={video.snippet.thumbnails.medium.url}
+                alt={video.snippet.title}
+                className="w-full"
+              />
+              <div className="flex items-center mt-2">
+                {popularVideosLogos[video.snippet.channelId] && (
                   <img
                     src={popularVideosLogos[video.snippet.channelId]}
                     alt="Channel Logo"
                     className="w-8 h-8 rounded-full mr-2"
                   />
-                  <h4 className="font-bold">{video.snippet.title}</h4>
-                </div>
-                <p className="text-sm text-gray-600">{video.snippet.channelTitle}</p>
-                {/* Display view count */}
-                <p className="text-sm text-gray-600 mt-1">{video.statistics.viewCount} views</p>
-              </Link>
-            </div>
-          ))
-        ) : (
-          <p>Loading popular videos...</p>
-        )}
+                )}
+                <h4 className="font-bold">{video.snippet.title}</h4>
+              </div>
+              <p>{video.snippet.channelTitle}</p>
+              <p>{video.statistics.viewCount} views</p>
+            </Link>
+          </div>
+        ))}
       </div>
     </div>
   );

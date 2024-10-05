@@ -1,13 +1,22 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const [videos, setVideos] = useState([]);
   const [channelLogos, setChannelLogos] = useState({}); // Store channel logos
   const [error, setError] = useState('');
+  const navigate = useNavigate(); // For navigation
 
   useEffect(() => {
+    // Check if the username is in localStorage
+    const username = localStorage.getItem('username');
+    if (!username) {
+      // Redirect to the login page if username is not in local storage
+      navigate('/login');
+      return; // Prevent fetching videos if redirected
+    }
+
     // Fetch popular videos for the home page
     axios
       .get('https://www.googleapis.com/youtube/v3/videos', {
@@ -29,7 +38,7 @@ const Home = () => {
         console.error('Error fetching popular videos:', err);
         setError('Failed to load videos');
       });
-  }, []);
+  }, [navigate]);
 
   // Fetch channel logos for the home page videos
   const fetchChannelLogo = (channelId) => {
@@ -55,7 +64,7 @@ const Home = () => {
   };
 
   return (
-    <div className="flex flex-col items-center mt-10">
+    <div className="flex flex-col items-center mt-10 bg-base-100 text-primary">
       {error && <p className="text-red-500 mb-4">{error}</p>}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {videos.map((video) => (
@@ -75,9 +84,9 @@ const Home = () => {
                 />
                 <h4 className="font-bold">{video.snippet.title}</h4>
               </div>
-              <p className="text-sm text-gray-600">{video.snippet.channelTitle}</p>
+              <p className="text-sm text-accent">{video.snippet.channelTitle}</p>
               {/* Display number of views */}
-              <p className="text-sm text-gray-600 mt-1">{video.statistics.viewCount} views</p>
+              <p className="text-sm text-accent mt-1">{video.statistics.viewCount} views</p>
             </Link>
           </div>
         ))}

@@ -11,7 +11,17 @@ export default {
     require('daisyui'),
   ],
   daisyui: {
-    themes: ["dark"],
+    themes: [
+      {
+        mytheme: {
+          "primary": "#F1F1F1",// font1
+          "secondary": "#272727",//bg2 
+          "accent": "#AAAAAA",// -font2
+          "neutral": "#121212", //search bg
+          "base-100": "#0F0F0F",//bg1
+        },
+      },
+    ],
   },
   
 }

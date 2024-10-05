@@ -6,6 +6,7 @@ const CommentForm = ({ videoId, addComment }) => {
   const [username, setUsername] = useState('');
 
   useEffect(() => {
+    // Retrieve the username from localStorage when the component mounts
     const storedUsername = localStorage.getItem('username');
     if (storedUsername) {
       setUsername(storedUsername);
@@ -21,17 +22,19 @@ const CommentForm = ({ videoId, addComment }) => {
       videoId,
     };
 
+    // Post new comment to MockAPI
     axios
-      .post('https://66f1060c41537919154f2fc1.mockapi.io/Comments', newComment)
+      .post('https://66f1060c41537919154f2fc1.mockapi.io/comments', newComment)
       .then((response) => {
         addComment(response.data);
-        setText('');
+        setText(''); // Clear the input field after submission
       })
-      .catch((error) => console.error(error));
+      .catch((error) => console.error('Error submitting comment:', error));
   };
 
   return (
     <div className="mt-4">
+      {/* Remove username input and fetch from localStorage */}
       <textarea
         placeholder="Add a public comment..."
         className="border p-2 w-full mb-2"

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import { Link } from 'react-router-dom';
 const SignUp = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -77,6 +77,7 @@ const SignUp = () => {
       >
         Sign Up
       </button>
+      <p>Already have an account? <Link to="/signup" className="text-red-500">Log in</Link></p>
     </div>
   );
 };
