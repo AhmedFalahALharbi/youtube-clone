@@ -16,7 +16,6 @@ const Login = () => {
       })
       .then((response) => {
         if (response.data.length > 0) {
-          // Store the username in localStorage
           localStorage.setItem('username', username);
           navigate('/');
         } else {
@@ -28,7 +27,6 @@ const Login = () => {
 
   return (
     <div className="flex flex-col justify-center items-center h-screen bg-neutral text-gray-200">
-      {/* Card Container */}
       <div className="bg-secondary shadow-md rounded-lg p-10 w-full max-w-sm">
         <div className="flex flex-col items-center">
           <img
@@ -42,10 +40,8 @@ const Login = () => {
           </p>
         </div>
 
-        {/* Error Message */}
         {error && <p className="text-red-400 text-sm mb-4">{error}</p>}
 
-        {/* Input Fields */}
         <input
           type="text"
           placeholder="Username"
@@ -61,7 +57,6 @@ const Login = () => {
           onChange={(e) => setPassword(e.target.value)}
         />
 
-        {/* Login Button */}
         <button
           onClick={handleLogin}
           className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md w-full mb-6"
@@ -69,7 +64,6 @@ const Login = () => {
           Next
         </button>
 
-        {/* Signup Link */}
         <p className="text-sm text-gray-400">
           Don`t have an account?{' '}
           <Link to="/signup" className="text-blue-400 hover:underline">

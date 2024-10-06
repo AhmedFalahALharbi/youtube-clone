@@ -4,34 +4,32 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const Home = () => {
   const [videos, setVideos] = useState([]);
-  const [channelLogos, setChannelLogos] = useState({}); // Store channel logos
+  const [channelLogos, setChannelLogos] = useState({}); 
   const [error, setError] = useState('');
-  const navigate = useNavigate(); // For navigation
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if the username is in localStorage
     const username = localStorage.getItem('username');
     if (!username) {
-      // Redirect to the login page if username is not in local storage
       navigate('/login');
-      return; // Prevent fetching videos if redirected
+      return; 
     }
 
-    // Fetch popular videos for the home page
+   
     axios
       .get('https://www.googleapis.com/youtube/v3/videos', {
         params: {
-          part: 'snippet,statistics', // Fetch snippet and statistics (for view count)
+          part: 'snippet,statistics', 
           chart: 'mostPopular',
           maxResults: 30,
-          regionCode: 'SA', // You can change this to any region
-          key: 'AIzaSyCQTFSPFFl6g1LTKyCFBnz873ZyIRIB7xw', // Your YouTube API Key
+          regionCode: 'SA', 
+          key: 'AIzaSyCQTFSPFFl6g1LTKyCFBnz873ZyIRIB7xw',
         },
       })
       .then((response) => {
-        setVideos(response.data.items); // Set the popular videos
+        setVideos(response.data.items); 
         response.data.items.forEach((video) => {
-          fetchChannelLogo(video.snippet.channelId); // Fetch channel logo for each video
+          fetchChannelLogo(video.snippet.channelId); 
         });
       })
       .catch((err) => {
@@ -40,14 +38,13 @@ const Home = () => {
       });
   }, [navigate]);
 
-  // Fetch channel logos for the home page videos
   const fetchChannelLogo = (channelId) => {
     axios
       .get('https://www.googleapis.com/youtube/v3/channels', {
         params: {
           part: 'snippet',
           id: channelId,
-          key: 'AIzaSyCQTFSPFFl6g1LTKyCFBnz873ZyIRIB7xw', // Your YouTube API Key
+          key: 'AIzaSyCQTFSPFFl6g1LTKyCFBnz873ZyIRIB7xw', 
         },
       })
       .then((response) => {
@@ -76,7 +73,6 @@ const Home = () => {
                 className="w-full"
               />
               <div className="flex items-center mt-2">
-                {/* Display channel logo for each video */}
                 <img
                   src={channelLogos[video.snippet.channelId]}
                   alt="Channel Logo"
@@ -85,7 +81,6 @@ const Home = () => {
                 <h4 className="font-bold">{video.snippet.title}</h4>
               </div>
               <p className="text-sm text-accent">{video.snippet.channelTitle}</p>
-              {/* Display number of views */}
               <p className="text-sm text-accent mt-1">{video.statistics.viewCount} views</p>
             </Link>
           </div>

@@ -3,11 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 
 const Header = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [username, setUsername] = useState(null); // State to hold the logged-in username
+  const [username, setUsername] = useState(null); 
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Retrieve the username from local storage on component mount
     const storedUsername = localStorage.getItem("username");
     if (storedUsername) {
       setUsername(storedUsername);
@@ -22,7 +21,6 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    // Clear the username from local storage and update state
     localStorage.removeItem("username");
     setUsername(null);
     navigate("/login");
@@ -30,7 +28,6 @@ const Header = () => {
 
   return (
     <header className="flex items-center justify-between p-2 bg-base-100 text-primary sm:p-4">
-      {/* Drawer and logo */}
       <div className="flex items-center">
         <div className="drawer">
           <input id="my-drawer" type="checkbox" className="drawer-toggle" />
@@ -75,7 +72,6 @@ const Header = () => {
         </Link>
       </div>
 
-      {/* Search bar */}
       <form onSubmit={handleSearch} className="flex w-full max-w-lg mx-4 sm:w-auto sm:mx-4">
         <input
           type="text"
@@ -98,9 +94,7 @@ const Header = () => {
         </button>
       </form>
 
-      {/* User menu and profile */}
       <div className="flex items-center">
-        {/* Notifications */}
         <button className="hidden sm:block mx-2">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -112,7 +106,6 @@ const Header = () => {
           </svg>
         </button>
 
-        {/* Profile avatar dropdown */}
         <div className="dropdown dropdown-end">
           <div
             tabIndex={0}

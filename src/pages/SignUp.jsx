@@ -16,20 +16,16 @@ const SignUp = () => {
       return;
     }
 
-    // Clear previous error and success messages
     setError('');
     setSuccess('');
 
-    // First, check if the username already exists using a GET request
     axios
       .get('https://66f1060c41537919154f2fc1.mockapi.io/users')
       .then((response) => {
-        // Check if the username exists
         const existingUser = response.data.find((u) => u.username === username);
         if (existingUser) {
           setError('Username already exists. Please choose another.');
         } else {
-          // If the username doesn't exist, proceed with the POST request to create the user
           axios
             .post('https://66f1060c41537919154f2fc1.mockapi.io/users', {
               username,
@@ -38,7 +34,6 @@ const SignUp = () => {
             .then((response) => {
               console.log('User signed up successfully:', response.data);
               setSuccess('Sign-up successful! Redirecting to login...');
-              // Redirect to login after 2 seconds
               setTimeout(() => navigate('/login'), 2000);
             })
             .catch((err) => {
@@ -55,7 +50,6 @@ const SignUp = () => {
 
   return (
     <div className="flex flex-col justify-center items-center h-screen bg-neutral text-gray-200">
-      {/* Card Container */}
       <div className="bg-secondary shadow-md rounded-lg p-10 w-full max-w-sm">
         <div className="flex flex-col items-center">
           <img
@@ -66,11 +60,9 @@ const SignUp = () => {
           <h2 className="text-2xl font-semibold mb-2 text-gray-100">Create your Google Account</h2>
         </div>
 
-        {/* Error and Success Messages */}
         {error && <p className="text-red-400 text-sm mb-4">{error}</p>}
         {success && <p className="text-green-400 text-sm mb-4">{success}</p>}
 
-        {/* Input Fields */}
         <input
           type="text"
           placeholder="Username"
@@ -86,7 +78,6 @@ const SignUp = () => {
           className="border border-gray-600 bg-neutral rounded-md p-3 mb-6 w-full text-gray-100 placeholder-gray-400 focus:outline-none focus:border-blue-500"
         />
 
-        {/* Sign Up Button */}
         <button
           onClick={handleSignUp}
           className="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md w-full mb-6"
@@ -94,7 +85,6 @@ const SignUp = () => {
           Sign Up
         </button>
 
-        {/* Login Link */}
         <p className="text-sm text-gray-400">
           Already have an account?{' '}
           <Link to="/login" className="text-blue-400 hover:underline">

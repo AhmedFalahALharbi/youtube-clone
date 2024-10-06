@@ -6,18 +6,15 @@ import VideoCard from '../components/VideoCard';
 const SearchResults = () => {
   const { query } = useParams();
   const [videos, setVideos] = useState([]);
-  const navigate = useNavigate(); // For navigation
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if the username is in localStorage
     const username = localStorage.getItem('username');
     if (!username) {
-      // Redirect to the login page if username is not in local storage
       navigate('/login');
-      return; // Prevent fetching videos if redirected
+      return; 
     }
 
-    // First request to search for videos
     axios
       .get(`https://www.googleapis.com/youtube/v3/search`, {
         params: {
@@ -31,7 +28,6 @@ const SearchResults = () => {
       .then((response) => {
         const videoIds = response.data.items.map((video) => video.id.videoId).join(',');
 
-        // Second request to get statistics (view count) for each video
         axios
           .get(`https://www.googleapis.com/youtube/v3/videos`, {
             params: {
