@@ -22,7 +22,7 @@ const CommentForm = ({ videoId, addComment }) => {
     };
 
     axios
-      .post('https://66f1060c41537919154f2fc1.mockapi.io/comments', newComment)
+      .post('https://670c744d7e5a228ec1d05f7b.mockapi.io/comments', newComment)
       .then((response) => {
         addComment(response.data);
         setText(''); 

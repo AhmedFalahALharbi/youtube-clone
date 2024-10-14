@@ -20,14 +20,14 @@ const SignUp = () => {
     setSuccess('');
 
     axios
-      .get('https://66f1060c41537919154f2fc1.mockapi.io/users')
+      .get('https://670c744d7e5a228ec1d05f7b.mockapi.io/user')
       .then((response) => {
         const existingUser = response.data.find((u) => u.username === username);
         if (existingUser) {
           setError('Username already exists. Please choose another.');
         } else {
           axios
-            .post('https://66f1060c41537919154f2fc1.mockapi.io/users', {
+            .post('https://670c744d7e5a228ec1d05f7b.mockapi.io/user', {
               username,
               password,
             })
